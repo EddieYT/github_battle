@@ -11,12 +11,14 @@
   },
   "scripts": {
     "create": "webpack",
-    "start": "webpack-dev-server --open"
+    "start": "webpack-dev-server --open",
+    "build": "NODE_ENV='production' webpack"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@babel/polyfill": "^7.2.5",
     "axios": "^0.18.0",
     "query-string": "^6.2.0",
     "react": "^16.7.0",

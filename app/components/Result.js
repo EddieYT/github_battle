@@ -1,13 +1,12 @@
-var React = require('react');
-var PropTypes = require('prop-types');
-var queryString = require('query-string');
-var api = require('../utils/api');
-var Link  = require('react-router-dom');
-var PlayerPreview = require('./PlayerPreview');
-var Loading = require('./Loading');
+import React from 'react';
+import PropTypes from 'prop-types';
+import queryString from 'query-string';
+import { battle } from '../utils/api';
+import { Link }  from 'react-router-dom';
+import PlayerPreview from './PlayerPreview';
+import Loading from './Loading';
 
-function Profile(props) {
-  var info = props.info;
+function Profile({ info }) {
   return (
     <PlayerPreview avatar={info.avatar_url} username={info.login}>
       <ul className='space-list-items'>
@@ -27,12 +26,12 @@ Profile.propTypes = {
   info: PropTypes.object.isRequired
 }
 
-function Player(props) {
+function Player({ label, score, profile}) {
   return (
     <div>
-      <h1 className="header">{props.label}</h1>
-      <h3 style={{textAlign: 'center'}}>Score: {props.score}</h3>
-      <Profile info={props.profile}/>
+      <h1 className="header">{label}</h1>
+      <h3 style={{textAlign: 'center'}}>Score: {score}</h3>
+      <Profile info={profile}/>
     </div>
   )
 }
@@ -55,35 +54,28 @@ class Result extends React.Component {
   }
 
   componentDidMount() {
-    var players = queryString.parse(this.props.location.search);
-    api.battle([
-      players.playerOneName,
-      players.playerTwoName
-    ]).then(function(results) {
+    const { playerOneName, playerTwoName } = queryString.parse(this.props.location.search);
+    battle([
+      playerOneName,
+      playerTwoName
+    ]).then((results) => {
       if (results === null) {
-        return this.setState(function() {
-            return {
-              error: "Looks like there's an error, check if both users exist...",
-              loading: false
-            }
-        });
+        return this.setState(() => ({
+            error: "Looks like there's an error, check if both users exist...",
+            loading: false
+        }));
       }
 
-      this.setState(function() {
-        return {
-          error: null,
-          winner: results[0],
-          loser: results[1],
-          loading: false
-        }
-      });
-    }.bind(this));
+      this.setState(() => ({
+        error: null,
+        winner: results[0],
+        loser: results[1],
+        loading: false
+      }));
+    });
   }
   render() {
-    var error = this.state.error;
-    var winner = this.state.winner;
-    var loser = this.state.loser;
-    var loading = this.state.loading;
+    const { error, winner, loser, loading } = this.state;
     if (loading) {
       return <Loading />
     }
@@ -113,4 +105,4 @@ class Result extends React.Component {
   }
 }
 
-module.exports = Result;
+export default Result;

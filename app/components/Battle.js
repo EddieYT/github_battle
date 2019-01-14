@@ -1,33 +1,7 @@
-var React = require('react');
-var PropTypes = require('prop-types');
-var Link = require('react-router-dom').Link;
-var PlayerPreview = require('./PlayerPreview');
-
-function PlayerPreview(props) {
-  return (
-    <div>
-      <div className="column">
-        <img
-          className="avatar"
-          src={props.avatar}
-          alt={'Avatar for ' + props.username}
-        />
-        <h2>@{props.username}</h2>
-      </div>
-      <button
-        className="reset"
-        onClick={props.onReset.bind(null, props.id)}
-      >
-        Reset
-      </button>
-    </div>
-  )
-}
-
-PlayerPreview.propTypes = {
-  avatar: PropTypes.string.isRequired,
-  username: PropTypes.string.isRequired,
-}
+import React from 'react';
+import PropTypes from 'prop-types';
+import { Link } from 'react-router-dom';
+import PlayerPreview from './PlayerPreview';
 
 class PlayerInput extends React.Component {
   constructor(props) {
@@ -42,12 +16,8 @@ class PlayerInput extends React.Component {
   }
 
   handleChange(event) {
-    var value = event.target.value;
-    this.setState(function() {
-        return {
-          username: value
-        }
-    });
+    const value = event.target.value;
+    this.setState(() => ({ username: value }));
   }
 
   handleSubmit(event) {
@@ -59,23 +29,25 @@ class PlayerInput extends React.Component {
   }
 
   render() {
+    const { username } = this.state;
+    const { label } = this.props;
     return (
       <form className='column' onSubmit={this.handleSubmit}>
         <label className='header' htmlFor='username'>
-          {this.props.label}
+          {label}
         </label>
         <input
           id='username'
           placeholder='github username'
           type='text'
-          value={this.state.username}
+          value={username}
           autoComplete='off'
           onChange={this.handleChange}
         />
         <button
           className='button'
           type='submit'
-          disabled={!this.state.username}>
+          disabled={!username}>
             Submit
         </button>
       </form>
@@ -99,29 +71,22 @@ class Battle extends React.Component {
   }
 
   handleSubmit(id, username) {
-    this.setState(function() {
-      var newState = {};
-      newState[id + 'Name'] = username;
-      newState[id + 'Image'] = 'https://github.com/' + username + '.png?size=200';
-      return newState;
-    });
+    this.setState(() => ({
+      [id + 'Name'] : username,
+      [id + 'Image'] : `https://github.com/${username}.png?size=200`
+    }));
   }
 
   handleReset(id) {
-    this.setState(function() {
-      var newState = {};
-      newState[id + 'Name'] = "";
-      newState[id + 'Image'] = null;
-      return newState;
-    });
+    this.setState(() => ({
+      [id + 'Name'] : "",
+      [id + 'Image'] : null
+    }));
   }
 
   render() {
-    var match = this.props.match;
-    var playerOneName = this.state.playerOneName;
-    var playerTwoName = this.state.playerTwoName;
-    var playerOneImage = this.state.playerOneImage;
-    var playerTwoImage = this.state.playerTwoImage;
+    const { match } = this.props;
+    const { playerOneName, playerTwoName, playerOneImage, playerTwoImage} = this.state;
 
     return (
       <div>
@@ -138,7 +103,7 @@ class Battle extends React.Component {
               username={playerOneName}>
             <button
               className="reset"
-              onClick={this.handleReset.bind(null, "playerOne")}>
+              onClick={() => this.handleReset("playerOne")}>
               Reset
             </button>
           </PlayerPreview>
@@ -155,7 +120,7 @@ class Battle extends React.Component {
               username={playerTwoName}>
               <button
                 className="reset"
-                onClick={this.handleReset.bind(null, "playerTwo")}>
+                onClick={() => this.handleReset.bind("playerTwo")}>
                 Reset
               </button>
             </PlayerPreview>}
@@ -166,9 +131,9 @@ class Battle extends React.Component {
             className="button"
             to={{
                 pathname: match.url + '/results',
-                search: `?playerOneName=` + playerOneName + '&playerTwoName=' + playerTwoName
+                search: `?playerOneName=${playerOneName}&playerTwoName=${playerTwoName}`
             }}>
-            Battle!
+              Battle!
           </Link>
         }
       </div>
@@ -182,4 +147,4 @@ PlayerInput.propTypes = {
   onSubmit: PropTypes.func.isRequired
 }
 
-module.exports = Battle;
+export default Battle;
